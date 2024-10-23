@@ -74,7 +74,6 @@ require('dotenv').config(); // Cargar variables de entorno
 
 async function authorize() {
 
-    console.log(process.env.GOOGLE_CLIENT_EMAIL, process.env.GOOGLE_PRIVATE_KEY);
     const jwtClient = new google.auth.JWT(
         process.env.GOOGLE_CLIENT_EMAIL,
         null,
@@ -383,7 +382,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
             console.log("fecha actual");
             await page.goto('https://jornalggn.com.br/', { waitUntil: ['domcontentloaded', 'networkidle2'], timeout: 60000 });
             currentHref = await page.evaluate(() => {
-                const element = document.querySelector('.featured--left article');
+                const element = document.querySelector('.featured--left article a');
                 return element ? element.href : null;
             });
             currentDate = await page.evaluate(() => {
@@ -424,7 +423,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
 //            await waitFor(60000);
             console.log("vamos 133");
-            await waitFor(2000);
+            await waitFor(20000);
 
             await page.evaluate((device) => {
 
