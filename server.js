@@ -287,7 +287,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
           "--single-process",
           "--no-zygote",
         ],
-        headless: false,
+        headless: "true",
         executablePath:
           process.env.NODE_ENV === "production"
             ? process.env.PUPPETEER_EXECUTABLE_PATH
