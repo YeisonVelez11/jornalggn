@@ -20,17 +20,17 @@ const locateChrome = require('locate-chrome');
 const fsp = require('fs/promises');
 
 // prod
-/*const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
+const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
 const idCarpetaRaiz = '1Ru-QfXmOa2lH6DQOGi4YfgquRVTuCLZp';
 const idCarpetaBanners = "1YXZGIjUfjl5m5aqk9hSEUVtplAS31lkg";
-const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";*/
+const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";
 
 
 //prueba/*
-const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
+/*const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
 const idCarpetaRaiz = '1LFO6UvWfam7KJSVRfGKlijv8eRLYVoD1';
 const idCarpetaBanners = "1rcCJ8bsaxd4VhTSA1TjiI1GEpFy_XJ6G";
-const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";
+const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";*/
 
 // Registrar la fuente
 registerFont(path.join(__dirname, "public",'fonts', 'HelveticaNeue.ttf'), { family: 'Helvetica Neue' });
@@ -678,7 +678,7 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         }
         else{
             console.log("banner1 celular");
-            ctx.drawImage(banner1Image, (canvasWidth - banner1Image.width) / 2, canvasHeight - 250 - 100); 
+            ctx.drawImage(banner1Image, (canvasWidth - banner1Image.width) / 2, canvasHeight - 250 - 100 - 2 ); 
         }
     
 
@@ -687,7 +687,19 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
     if(bannerLateralUrl && device === 'celular'){
         console.log("segundo banner");
         const bannerLateralImage = await loadImage(bannerLateralUrl); // Otra URL pública
-        ctx.drawImage(bannerLateralImage, (canvasWidth - bannerLateralImage.width) / 2, canvasHeight - 100); // Centrado
+        const imageX = (canvas.width - bannerLateralImage.width) / 2;
+        const imageY = canvas.height - 100;
+
+        // Dibujar la imagen
+        ctx.drawImage(bannerLateralImage, imageX, imageY);
+
+        // Agregar el borde superior blanco de 2px
+        ctx.strokeStyle = 'white'; // Color del borde
+        ctx.lineWidth = 2; // Grosor del borde
+        ctx.beginPath();
+        ctx.moveTo(imageX, imageY); // Comienza en la esquina superior izquierda de la imagen
+        ctx.lineTo(imageX + canvas.width, imageY - 2); // Línea a la esquina superior derecha de la imagen
+        ctx.stroke(); 
 
     }
 
@@ -699,7 +711,7 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         ctx.fillText(formattedDate, canvasWidth - 90 , 16);
         //if(bannerLateralUrl.height <= 110){
             const x = await loadImage('./public/images/banners/x.png'); // Otra URL pública
-            ctx.drawImage(x, canvasWidth - 32 - 21, canvasHeight - 100 - 32); // Ajustar posición
+            ctx.drawImage(x, canvasWidth - 35, canvasHeight - 100 - 32 - 2); // Ajustar posición
         //}
 
     }
