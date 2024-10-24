@@ -15,19 +15,18 @@ const locateChrome = require('locate-chrome');
 const fsp = require('fs/promises');
 
 // prod
-const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
+/*const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
 const idCarpetaRaiz = '1Ru-QfXmOa2lH6DQOGi4YfgquRVTuCLZp';
 const idCarpetaBanners = "1YXZGIjUfjl5m5aqk9hSEUVtplAS31lkg";
-const fileJsonPasado = "1TVvW-ghLJn1xvtXLYdYTXaxmzDR6Mhws";
+const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";
+*/
 
-
-
-//prueba
+//prueba/*
 /*const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
 const idCarpetaRaiz = '1LFO6UvWfam7KJSVRfGKlijv8eRLYVoD1';
 const idCarpetaBanners = "1rcCJ8bsaxd4VhTSA1TjiI1GEpFy_XJ6G";
-const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";
-*/
+const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";*/
+
 // Registrar la fuente
 registerFont(path.join(__dirname, "public",'fonts', 'HelveticaNeue.ttf'), { family: 'Helvetica Neue' });
 registerFont(path.join(__dirname, "public", 'fonts', 'SanFrancisco.ttf'), { family: 'San Francisco' });
@@ -43,9 +42,44 @@ async function saveCurrentHref(href) {
     fs.writeFileSync(storageFilePath, href, 'utf-8');
 }
 
-function formatDateFromHref(href) {
-    const fechaMoment = moment(href, "MM/DD/YYYY");
+function formatDateFromHref(href, datePast) {
+
+    if(!datePast){
+        console.log("aca");
+        const months = {
+            "janeiro": 1,
+            "fevereiro": 2,
+            "março": 3,
+            "abril": 4,
+            "maio": 5,
+            "junho": 6,
+            "julho": 7,
+            "agosto": 8,
+            "setembro": 9,
+            "outubro": 10,
+            "novembro": 11,
+            "dezembro": 12
+        };
     
+        // Separar la cadena en partes
+        const parts = href.split(' ');
+    
+        // Extraer el día, mes y año
+        const day = parts[0]; // 23
+        const monthText = parts[2]; // "outubro"
+        const year = parts[4]; // 2024
+    
+        // Obtener el número del mes
+        const monthNum = months[monthText.toLowerCase()];
+        return  {
+            day: day,
+            month: monthNum,
+            year: year
+        }
+    }
+
+    const fechaMoment = moment(href, "MM/DD/YYYY");
+    console.log(fechaMoment,href);
     // Extraer el día, el mes y el año
     const day = fechaMoment.date(); // Día del mes (1-31)
     const month = fechaMoment.month() + 1; // Mes en número (0-11), sumamos 1 para que sea (1-12)
@@ -190,7 +224,7 @@ async function waitFor(ms) {
 }
 const device_celular = {
     width:355,
-    height:667
+    height: (667 + 250)
 }
 
 
@@ -217,7 +251,7 @@ async function agregarHrefJson(hrefJson) {
             console.error("El contenido del archivo JSON no es un arreglo.");
             return;
         }
-        const hrefExistente = contenidoActual.some(item => item.href === hrefJson.href);
+        const hrefExistente = contenidoActual.some(item => item.fecha === hrefJson.fecha);
 
         if (hrefExistente) {
             console.log(`El href "${hrefJson}" ya existe. No se guardará nada.`);
@@ -386,25 +420,35 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 return element ? element.href : null;
             });
             currentDate = await page.evaluate(() => {
-                const dateTextElement = document.querySelector('.featured-post-content').childNodes[1];
+                const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
     
                 // Extraemos el texto y lo convertimos a un string
                 const dateText = dateTextElement.nodeValue.trim();
                 return dateText;
             });
-
+            console.log(currentDate);
         }
 
+        const dateDetails = formatDateFromHref(currentDate, datePast); // Obtén las partes de la fecha
 
-
-        currentDate = moment(currentDate,'MM/DD/YYYY');
+        if(datePast){
+            currentDate = moment(currentDate,'MM/DD/YYYY');
+        }
+        else{
+            currentDate = dateDetails.month+"/"+dateDetails.day+"/"+dateDetails.year;
+        }
         console.log(currentDate); 
 
 
         if(currentHref && currentDate){
             console.log("sigue");
-            await agregarHrefJson({ href: currentHref, fecha:  currentDate});
-
+            await agregarHrefJson({ href: currentHref, fecha:  folderId ? (datePast ? currentDate.format("MM/DD/YYYY") : currentDate ) : moment(new Date(), "MM/DD/YYYY").format("MM/DD/YYYY")});
+            if(!folderId){
+                console.log("cierrra aquiiiiii");
+                await page.close();
+                await browser.close();
+                return ;
+            }
             console.log(currentHref);
             //await saveCurrentHref(currentHref);
             console.log("vamos 11");
@@ -423,9 +467,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
 //            await waitFor(60000);
             console.log("vamos 133");
-            await waitFor(20000);
-
-            await page.evaluate((device) => {
+            const fechaPagina = moment(currentDate,'DD/MM/YYYY').format('DD/MM/YYYY');
+            await page.evaluate((device,fechaPagina) => {
 
                 const back = document.querySelector("swg-popup-background");
                 if(back){
@@ -437,12 +480,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                     oneSignal.style.opacity = 0;
                 }
 
-                const cwi2 = document.querySelector("body > *");
-                if(cwi2){
-                    cwi2.style.opacity = 0
-                    cwi2.remove();
-
-                }
 
 
                 const cwiz = document.querySelector("c-wiz");
@@ -450,9 +487,12 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 if(cwiz){
                     cwiz.style.opacity = 0;
                 }
+
+                document.querySelector("p.todays-date").innerText= fechaPagina;
+
                 
                 const iframe = document.querySelectorAll("iframe");
-                iframe.forEach(add => add.style.opacity = 0);
+                iframe.forEach(add => add.remove());
 
                 
                 const publicidadMedio = document.querySelector(".ai-viewport-1");
@@ -469,6 +509,13 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                         breadcrumbs.style["margin-top"] = "275px";
                     }
                 }
+
+
+                if(device === "celular"){
+                    
+                    document.querySelector("p.single-resume").style["margin-bottom"] = "275px";
+                }
+
                const jsrenderer = document.querySelectorAll("[jsrenderer]");
                jsrenderer.forEach(add => add.style.opacity = 0);
 /*
@@ -492,7 +539,9 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                     //document.querySelector(".main-photo").style.opacity = 0
                 }
                
-            },device);
+            },device, fechaPagina);
+            //await waitFor(100000);
+
             console.log("vamos 1");
 
             const screenshotBuffer = await page.screenshot();
@@ -501,8 +550,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
             const finalImageBuffer = await processImage(screenshotBuffer, currentHref, banner1Url, bannerLateralUrl, device, currentDate); // Aquí pasamos las URLs
             console.log("vamos 4341");
     
-            const dateDetails = formatDateFromHref(currentDate); // Obtén las partes de la fecha
-            console.log("vamos 1445");
+      
     
             if (dateDetails) {
                 const day = dateDetails.day;
@@ -528,7 +576,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         await page.close();
     } 
     catch(e){
-        console.log("reeeintenta");
+        console.log("reeeintenta",e );
         hayError = true;
         intentos++;
     }
@@ -539,7 +587,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 intentos = 0;
             }
             else{
-                captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLateralUrl, datePast, device);
+                await captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLateralUrl, datePast, device);
             }
             hayError = false;
         }
@@ -635,8 +683,8 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         ctx.fillStyle = 'white';
         ctx.fillText(formattedDate, canvasWidth - 90 , 16);
         //if(bannerLateralUrl.height <= 110){
-            const x = await loadImage('./public/images/banners/x.jpg'); // Otra URL pública
-            ctx.drawImage(x, canvasWidth - 30, canvasHeight - 100); // Ajustar posición
+            const x = await loadImage('./public/images/banners/x.png'); // Otra URL pública
+            ctx.drawImage(x, canvasWidth - 32 - 21, canvasHeight - 100 - 32); // Ajustar posición
         //}
 
     }
@@ -697,6 +745,7 @@ app.get('/', async (req, res) => {
     }
 });
 function formatDateFromHrefDateTopright(href) {
+    console.log("formatDateFromHrefDateTopright", href);
     const dataMoment = moment(href, "MM/DD/YYYY");
     return dataMoment.format('D MMM YYYY');
 }
@@ -954,6 +1003,7 @@ app.post('/screenshot', async (req, res) => {
         const { folderId, banner1, banner_costado, datePast ,device} = req.body; // Obtener el ID de la carpeta, banner1 y banner_costado
         console.log("datePast",datePast);
         await captureScreenshotAndUpload(folderId, auth, banner1, banner_costado, datePast, device); // Pasa banner1 y banner_costado a la función
+        console.log("siguió");
         res.status(200).json({ message: 'Captura de pantalla realizada con éxito.' });
     } catch (error) {
         console.error('Error tomando la captura de pantalla:', error);
@@ -1065,6 +1115,9 @@ app.get('/take-screenshot', async (req, res) => {
                 
 
             }
+        }
+        if(!range && resultados.length === 0){
+            await axios.post('http://localhost:3000/screenshot', {})
         }
 
         res.status(200).json({ message: 'Proceso completado', resultados: resultados });
