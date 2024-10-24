@@ -15,11 +15,11 @@ const locateChrome = require('locate-chrome');
 const fsp = require('fs/promises');
 
 // prod
-/*const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
+const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
 const idCarpetaRaiz = '1Ru-QfXmOa2lH6DQOGi4YfgquRVTuCLZp';
 const idCarpetaBanners = "1YXZGIjUfjl5m5aqk9hSEUVtplAS31lkg";
 const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";
-*/
+
 
 //prueba/*
 /*const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
