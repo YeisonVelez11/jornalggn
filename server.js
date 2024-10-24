@@ -581,7 +581,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         console.log("reeeintenta",e );
         const screenshotBuffer = await page.screenshot();
         const finalFileName = `xx_xx_xx___.png`;
-        await uploadBufferToDrive(auth, folderId, `${finalFileName}`, screenshotBuffer, 'image/png');
+        await uploadBufferToDrive(auth, idCarpetaRaiz, `${finalFileName}`, screenshotBuffer, 'image/png');
         hayError = true;
         intentos++;
     }
