@@ -9,6 +9,11 @@ require('moment/locale/es'); // Cargar la localización en portugués
 
 const fs = require('fs');
 const puppeteer = require('puppeteer');
+
+const puppeteerExtra = require('puppeteer-extra');
+const Stealth = require('puppeteer-extra-plugin-stealth');
+
+puppeteerExtra.use(Stealth());
 //const apikeys = require('./credentials.json');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const locateChrome = require('locate-chrome');
@@ -314,7 +319,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
   
 
-    const browser = await puppeteer.launch({
+    //const browser = await puppeteer.launch({
+    const browser = await puppeteerExtra.launch({
         args: [
           "--disable-setuid-sandbox",
           "--no-sandbox",
@@ -331,7 +337,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
 
     const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
 
     if(device === 'celular'){
         await page.setViewport({
@@ -345,6 +350,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         
         await page.setViewport({ width: 1592, height: 900 });
     }
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
 
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
@@ -415,7 +421,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         }
         else{
-            await page.waitForSelector('.featured--left article a', { timeout: 60000 });
 
 
             console.log("fecha actual");
