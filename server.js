@@ -15,17 +15,17 @@ const locateChrome = require('locate-chrome');
 const fsp = require('fs/promises');
 
 // prod
-const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
+/*const idCarpetaJsones = "119SphX2xlzS-dvWXkSecVOoXUD2ixDg1";
 const idCarpetaRaiz = '1Ru-QfXmOa2lH6DQOGi4YfgquRVTuCLZp';
 const idCarpetaBanners = "1YXZGIjUfjl5m5aqk9hSEUVtplAS31lkg";
-const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";
+const fileJsonPasado = "13llXgiizllL8wRRIBupP_O9-W8uhwcla";*/
 
 
 //prueba/*
-/*const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
+const idCarpetaJsones = "1YXZ9RaTBwNh4-JJSBJBg4dsr2bIf1KQ0";
 const idCarpetaRaiz = '1LFO6UvWfam7KJSVRfGKlijv8eRLYVoD1';
 const idCarpetaBanners = "1rcCJ8bsaxd4VhTSA1TjiI1GEpFy_XJ6G";
-const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";*/
+const fileJsonPasado = "1QqKyXiOhFeqwAa5XlXvu9HYqmwkS77b6";
 
 // Registrar la fuente
 registerFont(path.join(__dirname, "public",'fonts', 'HelveticaNeue.ttf'), { family: 'Helvetica Neue' });
@@ -421,8 +421,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
             });
             currentDate = await page.evaluate(() => {
                 console.log(document.querySelector('.featured--left .featured-post-content'));
-                console.log(document.querySelector('.featured--left .featured-post-content').innerText);
-
                 const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
     
                 // Extraemos el texto y lo convertimos a un string
@@ -563,6 +561,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 // Crear el nombre del archivo
                 console.log("vamos 1232");
 
+                
                 const finalFileName = `${day}_${monthNum}_${year}__${!device ? 'desktop' : device}_.png`;
                 await uploadBufferToDrive(auth, folderId, `${finalFileName}`, finalImageBuffer, 'image/png');
                 console.log("vamos 321");
@@ -580,6 +579,9 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
     } 
     catch(e){
         console.log("reeeintenta",e );
+        const screenshotBuffer = await page.screenshot();
+        const finalFileName = `xx_xx_xx___.png`;
+        await uploadBufferToDrive(auth, folderId, `${finalFileName}`, screenshotBuffer, 'image/png');
         hayError = true;
         intentos++;
     }
