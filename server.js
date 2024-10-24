@@ -420,6 +420,9 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 return element ? element.href : null;
             });
             currentDate = await page.evaluate(() => {
+                console.log(document.querySelector('.featured--left .featured-post-content'));
+                console.log(document.querySelector('.featured--left .featured-post-content').innerText);
+
                 const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
     
                 // Extraemos el texto y lo convertimos a un string
