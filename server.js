@@ -331,6 +331,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
 
     const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
+
     if(device === 'celular'){
         await page.setViewport({
             width: device_celular.width,
@@ -413,6 +415,9 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         }
         else{
+            await page.waitForSelector('.featured--left article a', { timeout: 60000 });
+
+
             console.log("fecha actual");
             await page.goto('https://jornalggn.com.br/', { waitUntil: ['domcontentloaded', 'networkidle2'], timeout: 60000 });
             currentHref = await page.evaluate(() => {
