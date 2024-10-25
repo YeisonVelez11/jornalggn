@@ -505,7 +505,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 const iframe = document.querySelectorAll("iframe");
                 iframe.forEach(add => add.remove());
                 document.body.classList.remove('swg-disable-scroll');
-                document.querySelector("swg-popup-background")?.remove(); 
                 const publicidadMedio = document.querySelector(".ai-viewport-1");
                 if(publicidadMedio){
                     publicidadMedio.remove();
@@ -678,9 +677,9 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         }
         else{
             console.log("banner1 celular");
-            const imageY = canvasHeight - 250 - 100 - 2;
+            const imageY = canvasHeight - banner1Image.height - 100 - 2;
             // Definir el color del rectángulo
-            ctx.fillStyle = "white"; // Color blanco
+            ctx.fillStyle = "#F6F6F6"; // Color blanco
             // Dibujar el rectángulo que ocupa todo el ancho del canvas
             ctx.fillRect(0, imageY, canvas.width, banner1Image.height);
             // Dibujar la imagen
@@ -698,14 +697,14 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         const imageY = canvas.height - 100;
 
         // Definir el color del rectángulo
-        ctx.fillStyle = "white"; // Color blanco
+        ctx.fillStyle = "#F6F6F6"; // Color blanco
         // Dibujar el rectángulo que ocupa todo el ancho del canvas
         ctx.fillRect(0, imageY, canvas.width, bannerLateralImage.height);
         // Dibujar la imagen
         ctx.drawImage(bannerLateralImage, imageX, imageY);
 
         // Agregar el borde superior blanco de 2px
-        ctx.strokeStyle = 'white'; // Color del borde
+        ctx.strokeStyle = '#F6F6F6'; // Color del borde
         ctx.lineWidth = 2; // Grosor del borde
         ctx.beginPath();
         ctx.moveTo(imageX, imageY); // Comienza en la esquina superior izquierda de la imagen
