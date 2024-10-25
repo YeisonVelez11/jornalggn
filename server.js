@@ -677,7 +677,7 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         }
         else{
             console.log("banner1 celular");
-            const imageY = canvasHeight - banner1Image.height - 100 - 1;
+            const imageY = canvasHeight - banner1Image.height - 100 - 2;
             // Definir el color del rectángulo
             ctx.fillStyle = "#F6F6F6"; // Color blanco
             // Dibujar el rectángulo que ocupa todo el ancho del canvas
@@ -699,17 +699,11 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         // Definir el color del rectángulo
         ctx.fillStyle = "#F6F6F6"; // Color blanco
         // Dibujar el rectángulo que ocupa todo el ancho del canvas
-        ctx.fillRect(0, imageY, canvas.width, bannerLateralImage.height);
+        ctx.fillRect(0, imageY - 2, canvas.width, bannerLateralImage.height + 2);
         // Dibujar la imagen
         ctx.drawImage(bannerLateralImage, imageX, imageY);
 
-        // Agregar el borde superior blanco de 2px
-        ctx.strokeStyle = '#F6F6F6'; // Color del borde
-        ctx.lineWidth = 2; // Grosor del borde
-        ctx.beginPath();
-        ctx.moveTo(imageX, imageY); // Comienza en la esquina superior izquierda de la imagen
-        ctx.lineTo(imageX + canvas.width, imageY - 2); // Línea a la esquina superior derecha de la imagen
-        ctx.stroke(); 
+      
 
     }
 
