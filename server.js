@@ -677,7 +677,7 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         }
         else{
             console.log("banner1 celular");
-            const imageY = canvasHeight - banner1Image.height - 100;
+            const imageY = canvasHeight - banner1Image.height - 100 - 1;
             // Definir el color del rectángulo
             ctx.fillStyle = "#F6F6F6"; // Color blanco
             // Dibujar el rectángulo que ocupa todo el ancho del canvas
