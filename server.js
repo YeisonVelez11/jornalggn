@@ -476,7 +476,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         
 
 
-//            await waitFor(60000);
+            await waitFor(10000);
             console.log("vamos 133");
             const fechaPagina = moment(currentDate,'DD/MM/YYYY').format('DD/MM/YYYY');
             await page.evaluate((device,fechaPagina) => {
@@ -523,7 +523,10 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
                 if(device === "celular"){
                     
-                    document.querySelector("p.single-resume").style["margin-bottom"] = "275px";
+                    const singleResume = document.querySelector("p.single-resume")
+                    if(singleResume){
+                        singleResume.style["margin-bottom"] = "275px";
+                    }
                 }
 
                const jsrenderer = document.querySelectorAll("[jsrenderer]");
