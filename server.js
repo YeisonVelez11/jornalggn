@@ -499,7 +499,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                     cwiz.style.opacity = 0;
                 }
 
-                document.querySelector("p.todays-date").innerText= fechaPagina;
+                //document.querySelector("p.todays-date").innerText= fechaPagina;
 
                 
                 const iframe = document.querySelectorAll("iframe");
