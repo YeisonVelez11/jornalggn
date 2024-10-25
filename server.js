@@ -327,7 +327,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
           "--single-process",
           "--no-zygote",
         ],
-        headless: "true",
+        headless: false,
         executablePath:
           process.env.NODE_ENV === "production"
             ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -504,11 +504,11 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 
                 const iframe = document.querySelectorAll("iframe");
                 iframe.forEach(add => add.remove());
-
-                
+                document.body.classList.remove('swg-disable-scroll');
+                document.querySelector("swg-popup-background")?.remove(); 
                 const publicidadMedio = document.querySelector(".ai-viewport-1");
                 if(publicidadMedio){
-                    publicidadMedio.style.opacity = 0;
+                    publicidadMedio.remove();
                 }
 
           
@@ -678,7 +678,14 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         }
         else{
             console.log("banner1 celular");
-            ctx.drawImage(banner1Image, (canvasWidth - banner1Image.width) / 2, canvasHeight - 250 - 100 - 2 ); 
+            const imageY = canvasHeight - 250 - 100 - 2;
+            // Definir el color del rectángulo
+            ctx.fillStyle = "white"; // Color blanco
+            // Dibujar el rectángulo que ocupa todo el ancho del canvas
+            ctx.fillRect(0, imageY, canvas.width, banner1Image.height);
+            // Dibujar la imagen
+
+            ctx.drawImage(banner1Image, (canvasWidth - banner1Image.width) / 2, imageY ); 
         }
     
 
@@ -690,6 +697,10 @@ async function processImage(screenshotBuffer, href, banner1Url, bannerLateralUrl
         const imageX = (canvas.width - bannerLateralImage.width) / 2;
         const imageY = canvas.height - 100;
 
+        // Definir el color del rectángulo
+        ctx.fillStyle = "white"; // Color blanco
+        // Dibujar el rectángulo que ocupa todo el ancho del canvas
+        ctx.fillRect(0, imageY, canvas.width, bannerLateralImage.height);
         // Dibujar la imagen
         ctx.drawImage(bannerLateralImage, imageX, imageY);
 
