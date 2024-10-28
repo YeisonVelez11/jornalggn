@@ -444,9 +444,13 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         if(datePast){
             currentDate = moment(currentDate,'MM/DD/YYYY');
+            fechaPagina = currentDate.format('DD/MM/YYYY');
+
         }
         else{
             currentDate = dateDetails.month+"/"+dateDetails.day+"/"+dateDetails.year;
+            fechaPagina = moment(new Date(currentDate),'DD/MM/YYYY').format('DD/MM/YYYY');
+
         }
         console.log(currentDate); 
 
@@ -478,7 +482,6 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
             await waitFor(10000);
             console.log("vamos 133");
-            fechaPagina =  moment(currentDate,'DD/MM/YYYY').format('DD/MM/YYYY');
 
             await page.evaluate((device,fechaPagina) => {
 
