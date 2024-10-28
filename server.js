@@ -353,7 +353,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
 
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-
+    let fechaPagina;
     try {
         hayError = false;
 
@@ -478,7 +478,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
             await waitFor(10000);
             console.log("vamos 133");
-            const fechaPagina = moment(currentDate,'DD/MM/YYYY').format('DD/MM/YYYY');
+            fechaPagina =  moment(currentDate,'DD/MM/YYYY').format('DD/MM/YYYY');
+
             await page.evaluate((device,fechaPagina) => {
 
                 const back = document.querySelector("swg-popup-background");
@@ -498,8 +499,11 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                 if(cwiz){
                     cwiz.style.opacity = 0;
                 }
+                const today = document.querySelector("p.todays-date");
+                if(today){
+                    today.innerText= fechaPagina;
 
-                //document.querySelector("p.todays-date").innerText= fechaPagina;
+                }
 
                 
                 const iframe = document.querySelectorAll("iframe");
