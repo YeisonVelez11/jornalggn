@@ -315,8 +315,32 @@ async function obtenerJsonHrefPasados() {
 
 let intentos = 0;
 let hayError = false;
-async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLateralUrl, datePast, device) {
+let page;
+let currentHref;
+let currentDate;
 
+async function newNotice(page){
+
+    console.log("fecha actual");
+    await page.goto('https://jornalggn.com.br/', { waitUntil: ['domcontentloaded', 'networkidle2'], timeout: 60000 });
+    currentHref = await page.evaluate(() => {
+        const element = document.querySelector('.featured--left article a');
+        return element ? element.href : null;
+    });
+    currentDate = await page.evaluate(() => {
+        console.log(document.querySelector('.featured--left .featured-post-content'));
+        const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
+
+        // Extraemos el texto y lo convertimos a un string
+        const dateText = dateTextElement.nodeValue.trim();
+        return dateText;
+    });
+    console.log(currentDate);
+}
+
+async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLateralUrl, datePast, device) {
+    currentHref = null;
+    currentDate = null;
   
 
     //const browser = await puppeteer.launch({
@@ -359,8 +383,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         console.log("aqui");
         console.log("datePast",datePast);
-        let currentHref;
-        let currentDate;
+     
         if(datePast){
             console.log("dias pasados");
             const formattedDate = moment(datePast, 'MM/DD/YYYY');
@@ -411,6 +434,10 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                             }  
                         }
                     }
+                    if(!currentHref){
+                        await newNotice(page);
+                        datePast = undefined;
+                    }
                 console.log("currentHref",currentHref);
 
 
@@ -421,23 +448,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         }
         else{
+            await newNotice(page);
 
-
-            console.log("fecha actual");
-            await page.goto('https://jornalggn.com.br/', { waitUntil: ['domcontentloaded', 'networkidle2'], timeout: 60000 });
-            currentHref = await page.evaluate(() => {
-                const element = document.querySelector('.featured--left article a');
-                return element ? element.href : null;
-            });
-            currentDate = await page.evaluate(() => {
-                console.log(document.querySelector('.featured--left .featured-post-content'));
-                const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
-    
-                // Extraemos el texto y lo convertimos a un string
-                const dateText = dateTextElement.nodeValue.trim();
-                return dateText;
-            });
-            console.log(currentDate);
         }
 
         const dateDetails = formatDateFromHref(currentDate, datePast); // Obtén las partes de la fecha
@@ -457,7 +469,9 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
 
         if(currentHref && currentDate){
             console.log("sigue");
-            await agregarHrefJson({ href: currentHref, fecha:  folderId ? (datePast ? currentDate.format("MM/DD/YYYY") : currentDate ) : moment(new Date(), "MM/DD/YYYY").format("MM/DD/YYYY")});
+            if(currentHref){
+                await agregarHrefJson({ href: currentHref, fecha:  folderId ? (datePast ? currentDate.format("MM/DD/YYYY") : currentDate ) : moment(new Date(), "MM/DD/YYYY").format("MM/DD/YYYY")});
+            }
             if(!folderId){
                 console.log("cierrra aquiiiiii");
                 await page.close();
@@ -599,7 +613,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
     catch(e){
         console.log("reeeintenta",e );
         const screenshotBuffer = await page.screenshot();
-        const finalFileName = `xx_xx_xx___.png`;
+        const moment = moment(new Date(currentDate),'DD_MM_YYYY').format('DD/MM/YYYY');
+        const finalFileName = `${moment}__${device}_.png`;
         await uploadBufferToDrive(auth, idCarpetaRaiz, `${finalFileName}`, screenshotBuffer, 'image/png');
         hayError = true;
         intentos++;
