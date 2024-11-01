@@ -321,8 +321,10 @@ let currentDate;
 
 async function newNotice(page){
 
-    console.log("fecha actual");
+    console.log("fecha actual", "https://jornalggn.com.br/");
     await page.goto('https://jornalggn.com.br/', { waitUntil: 'networkidle2' });
+    await waitFor(10000);
+
     currentHref = await page.evaluate(() => {
         const element = document.querySelector('.featured--left article a');
         return element ? element.href : null;
@@ -482,7 +484,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
             //await saveCurrentHref(currentHref);
             console.log("vamos 11");
             try {
-
+                console.log("go to",currentHref);
                 await page.goto(currentHref, { waitUntil:  'networkidle2'});
                 //await waitFor(5000);
 
