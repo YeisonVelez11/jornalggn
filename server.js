@@ -322,6 +322,8 @@ let currentDate;
 async function newNotice(page){
 
     console.log("fecha actual", "https://jornalggn.com.br/");
+    page.setDefaultNavigationTimeout(0);
+
     await page.goto('https://jornalggn.com.br/', { waitUntil: 'networkidle2' });
     await waitFor(10000);
 
@@ -485,6 +487,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
             console.log("vamos 11");
             try {
                 console.log("go to",currentHref);
+                   page.setDefaultNavigationTimeout(0);
+
                 await page.goto(currentHref, { waitUntil:  'networkidle2'});
                 //await waitFor(5000);
 
