@@ -4,16 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const { google } = require('googleapis');
 const streamifier = require('streamifier');
-//const moment = require('moment');
-const moment = require('moment-timezone');
-const fechaHoraArgentina = (date, inputFormat) => {
-    if (date) {
-        // Si se proporciona una fecha y un formato, analiza la fecha en base al formato
-        return moment.tz(date, inputFormat, "America/Argentina/Buenos_Aires");
-    }
-    // Si no se proporciona ninguna fecha, devuelve la fecha y hora actual
-    return moment.tz("America/Argentina/Buenos_Aires");
-};
+const moment = require('moment');
 require('moment/locale/es'); // Cargar la localización en portugués
 
 const fs = require('fs');
@@ -92,7 +83,7 @@ function formatDateFromHref(href, datePast) {
         }
     }
 
-    const fechaMoment = fechaHoraArgentina(href, "MM/DD/YYYY");
+    const fechaMoment = moment(href, "MM/DD/YYYY");
     console.log(fechaMoment,href);
     // Extraer el día, el mes y el año
     const day = fechaMoment.date(); // Día del mes (1-31)
@@ -399,7 +390,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
      
         if(datePast){
             console.log("dias pasados");
-            const formattedDate = fechaHoraArgentina(datePast, 'MM/DD/YYYY');
+            const formattedDate = moment(datePast, 'MM/DD/YYYY');
             console.log(formattedDate);
             let jsonData;
             try {
@@ -410,7 +401,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                     const elements = await obtenerJsonHrefPasados();
                     /*const isDateEqual = (fechaFormato, stringFechaPortugues) => {
                         // Convertir la fecha en formato MM/DD/YYYY a objeto moment
-                        const fecha1 = fechaHoraArgentina(fechaFormato, "MM/DD/YYYY");
+                        const fecha1 = moment(fechaFormato, "MM/DD/YYYY");
                         
                         // Extraer la fecha del string en portugués usando una expresión regular
                         const regex = /Publicado em (\d{1,2}) de (\w+) de (\d{4})/;
@@ -425,10 +416,10 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                         const anio = match[3];
 
                         // Convertir el mes en nombre a número
-                        const mesNumero = fechaHoraArgentina().locale('pt').month(mes).month();
+                        const mesNumero = moment().locale('pt').month(mes).month();
 
                         // Crear objeto moment para la fecha extraída
-                        const fecha2 = fechaHoraArgentina([anio, mesNumero, dia]);
+                        const fecha2 = moment([anio, mesNumero, dia]);
 
                         // Comparar las dos fechas
                         return fecha1.isSame(fecha2, 'day');
@@ -439,7 +430,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
                     
                     if(elements.length > 0){
                         for(let element of elements){
-                            if (element && fechaHoraArgentina(element.fecha, 'MM/DD/YYYY').isSame(fechaHoraArgentina(formattedDate, 'MM/DD/YYYY'), 'day')) {
+                            if (element && moment(element.fecha, 'MM/DD/YYYY').isSame(moment(formattedDate, 'MM/DD/YYYY'), 'day')) {
                                 currentHref = element.href;
                                 currentDate = element.fecha;
                                 console.log("encontrada fecha");
@@ -468,13 +459,13 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         const dateDetails = formatDateFromHref(currentDate, datePast); // Obtén las partes de la fecha
 
         if(datePast){
-            currentDate = fechaHoraArgentina(currentDate,'MM/DD/YYYY');
+            currentDate = moment(currentDate,'MM/DD/YYYY');
             fechaPagina = currentDate.format('DD/MM/YYYY');
 
         }
         else{
             currentDate = dateDetails.month+"/"+dateDetails.day+"/"+dateDetails.year;
-            fechaPagina = fechaHoraArgentina(new Date(currentDate),'DD/MM/YYYY').format('DD/MM/YYYY');
+            fechaPagina = moment(new Date(currentDate),'DD/MM/YYYY').format('DD/MM/YYYY');
 
         }
         console.log(currentDate); 
@@ -483,7 +474,7 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
         if(currentHref && currentDate){
             console.log("sigue");
             if(currentHref){
-                await agregarHrefJson({ href: currentHref, fecha:  folderId ? (datePast ? currentDate.format("MM/DD/YYYY") : currentDate ) : fechaHoraArgentina(new Date(), "MM/DD/YYYY").format("MM/DD/YYYY")});
+                await agregarHrefJson({ href: currentHref, fecha:  folderId ? (datePast ? currentDate.format("MM/DD/YYYY") : currentDate ) : moment(new Date(), "MM/DD/YYYY").format("MM/DD/YYYY")});
             }
             if(!folderId){
                 console.log("cierrra aquiiiiii");
@@ -629,8 +620,8 @@ async function captureScreenshotAndUpload(folderId, auth, banner1Url, bannerLate
     catch(e){
         console.log("reeeintenta",e );
         const screenshotBuffer = await page.screenshot();
-        const moment_date = fechaHoraArgentina(new Date(datePast ? datePast : new Date()),'DD_MM_YYYY').format('DD/MM/YYYY');
-        const hora = fechaHoraArgentina(new Date(),'hh_mm_ss').format('hh_mm_ss');
+        const moment_date = moment(new Date(datePast ? datePast : new Date()),'DD_MM_YYYY').format('DD/MM/YYYY');
+        const hora = moment(new Date(),'hh_mm_ss').format('hh_mm_ss');
         const finalFileName = `${moment_date}_${hora}_${device}_.png`;
         await uploadBufferToDrive(auth, idCarpetaRaiz, `${finalFileName}`, screenshotBuffer, 'image/png');
         hayError = true;
@@ -819,7 +810,7 @@ app.get('/', async (req, res) => {
 });
 function formatDateFromHrefDateTopright(href) {
     console.log("formatDateFromHrefDateTopright", href);
-    const dataMoment = fechaHoraArgentina(href, "MM/DD/YYYY");
+    const dataMoment = moment(href, "MM/DD/YYYY");
     return dataMoment.format('D MMM YYYY');
 }
 
@@ -845,8 +836,8 @@ app.post('/upload', upload.fields([{ name: 'banner1' }, { name: 'banner_lateral'
         let isPastDays = isDateRangeBeforeToday(dateRange);
 
         const dates = dateRange.split(' - ');
-        const startDate = fechaHoraArgentina(dates[0], 'MM/DD/YYYY');
-        const endDate = fechaHoraArgentina(dates[1], 'MM/DD/YYYY');
+        const startDate = moment(dates[0], 'MM/DD/YYYY');
+        const endDate = moment(dates[1], 'MM/DD/YYYY');
 
         let successMessage = `Los archivos se han subido correctamente a la carpeta: ${folderName}`;
         let banner1Id = null;
@@ -912,7 +903,7 @@ app.post('/upload', upload.fields([{ name: 'banner1' }, { name: 'banner_lateral'
                 const dateObject = {
                     id: Date.now().toString(), // Genera un ID usando el timestamp
                     fecha: currentDate,
-                    hora: fechaHoraArgentina().format('HH:mm:ss'),
+                    hora: moment().format('HH:mm:ss'),
                     banner: banner1Id ? `https://drive.google.com/thumbnail?id=${banner1Id}&sz=w1000` : null,
                     banner_lateral: bannerLateralId ? `https://drive.google.com/thumbnail?id=${bannerLateralId}&sz=w1000` : null,
                     folder: folderId, // Agregar el ID de la carpeta
@@ -972,8 +963,8 @@ app.post('/json-by-dates', async (req, res) => {
         const drive = google.drive({ version: 'v3', auth });
 
         const dates = dateRange.split(' - ');
-        const startDate = fechaHoraArgentina(dates[0], 'MM/DD/YYYY');
-        const endDate = fechaHoraArgentina(dates[1], 'MM/DD/YYYY');
+        const startDate = moment(dates[0], 'MM/DD/YYYY');
+        const endDate = moment(dates[1], 'MM/DD/YYYY');
         const jsonFolderId = idCarpetaJsones; // ID de la carpeta donde se guardan los JSON
 
         let jsonResults = [];
@@ -1085,8 +1076,8 @@ app.post('/screenshot', async (req, res) => {
 });
 
 app.get('/start', async (req, res) => {
-    console.log("start", fechaHoraArgentina(new Date(),'hh_mm_ss').format('hh_mm_ss'));
-    res.send(fechaHoraArgentina(new Date(),'hh_mm_ss').format('hh_mm_ss'));
+    console.log("start", moment().format('YYYY-MM-DD HH:mm:ss'));
+    res.send('iniciado', moment().format('YYYY-MM-DD HH:mm:ss'));
 });
 
 function obtenerFechaActual() {
@@ -1103,18 +1094,18 @@ function isDateRangeBeforeToday(dateRangeString) {
     const dates = dateRangeString.split(" - ");
 
     // Crear objetos moment para las fechas inicial y final
-    const startDate = fechaHoraArgentina(dates[0], 'MM/DD/YYYY'); // La fecha de inicio
-    const endDate = fechaHoraArgentina(dates[1], 'MM/DD/YYYY');   // La fecha de fin
-    const today = fechaHoraArgentina(); // La fecha actual
+    const startDate = moment(dates[0], 'MM/DD/YYYY'); // La fecha de inicio
+    const endDate = moment(dates[1], 'MM/DD/YYYY');   // La fecha de fin
+    const today = moment(); // La fecha actual
 
     // Verificar si ambas fechas son anteriores a hoy
     return startDate.isBefore(today, 'day') || endDate.isBefore(today, 'day');
 }
 function esFechaHoyOPosterior(fechaStr) {
     // Convertir la cadena de fecha al formato deseado
-    const fecha = fechaHoraArgentina(fechaStr, "MM-DD-YYYY");
+    const fecha = moment(fechaStr, "MM-DD-YYYY");
     // Obtener la fecha actual
-    const hoy = fechaHoraArgentina();
+    const hoy = moment();
 
     // Comparar las fechas
     return fecha.isSameOrAfter(hoy, 'day');
