@@ -1079,7 +1079,7 @@ app.post('/screenshot', async (req, res) => {
 
 app.get('/start', async (req, res) => {
     console.log("start");
-    res.send('iniciado');
+    res.send(fechaHoraArgentina(new Date(),'hh_mm_ss').format('hh_mm_ss'));
 });
 
 function obtenerFechaActual() {
