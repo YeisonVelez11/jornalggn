@@ -1090,11 +1090,7 @@ app.get('/start', async (req, res) => {
 });
 
 function obtenerFechaActual() {
-    const fechaActual = new Date();
-    const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
-    const dia = String(fechaActual.getDate()).padStart(2, '0');
-    const año = fechaActual.getFullYear();
-    const fechaFormateada = `${mes}/${dia}/${año}`;
+    const fechaFormateada = momentArgentina(new Date()).format('MM/DD/YYYY')
     return `${fechaFormateada} - ${fechaFormateada}`;
 }
 
