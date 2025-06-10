@@ -332,11 +332,10 @@ async function newNotice(page){
         return element ? element.href : null;
     });
     currentDate = await page.evaluate(() => {
-        console.log(document.querySelector('.featured--left .featured-post-content'));
-        const dateTextElement = document.querySelector('.featured--left .featured-post-content').childNodes[1];
-
+        const dateTextElement = document.querySelector('.featured--left .featured-post-content p span');
+        console.log(dateTextElement.innerText);
         // Extraemos el texto y lo convertimos a un string
-        const dateText = dateTextElement.nodeValue.trim();
+        const dateText = dateTextElement.innerText.trim();
         return dateText;
     });
     console.log(currentDate);
